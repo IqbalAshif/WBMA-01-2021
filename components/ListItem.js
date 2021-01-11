@@ -7,7 +7,7 @@ const ListItem = (props) => {
     <TouchableOpacity style={styles.row}>
       <View style={styles.imagebox}>
         <Image
-          style={{width: 100, height: 135}}
+          style={styles.image}
           source={{uri: props.singleMedia.thumbnails.w160}}
         />
       </View>
@@ -34,6 +34,10 @@ const styles = StyleSheet.create({
   },
   imagebox: {
     flex: 1,
+  },
+  image: {
+    flex: 1,
+    borderRadius: 6,
   },
   textbox: {
     flex: 2,
