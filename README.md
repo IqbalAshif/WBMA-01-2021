@@ -1,3 +1,5 @@
-# WBMA-First-App
-#Assignment: Front-end 1: First App
-#React-Native
+# Web Based Mobile Applications<br/>
+
+#Course Assignments</br>
+#React-Native</br>
+#Different branch for each assignment
