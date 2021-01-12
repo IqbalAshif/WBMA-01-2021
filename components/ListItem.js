@@ -1,10 +1,36 @@
-import React from 'react';
-import {Image, TouchableOpacity, View, Text, StyleSheet} from 'react-native';
+import React, {useState} from 'react';
+import {
+  Image,
+  TouchableOpacity,
+  View,
+  Text,
+  StyleSheet,
+  Modal,
+  TouchableHighlight,
+} from 'react-native';
 import PropTypes from 'prop-types';
 
 const ListItem = (props) => {
+  const [modalOpen, setmodalOpen] = useState(false);
+
   return (
-    <TouchableOpacity style={styles.row}>
+    <TouchableOpacity
+      style={styles.row}
+      onPress={() => setmodalOpen(!modalOpen)}
+    >
+      <Modal visible={modalOpen} animationType="slide">
+        <View style={styles.modalContent}>
+          <Text>{props.singleMedia.filename}</Text>
+          <TouchableHighlight
+            style={{...styles.openButton, backgroundColor: '#2196F3'}}
+            onPress={() => {
+              setmodalOpen(!modalOpen);
+            }}
+          >
+            <Text style={styles.textStyle}>Hide Modal</Text>
+          </TouchableHighlight>
+        </View>
+      </Modal>
       <View style={styles.imagebox}>
         <Image
           style={styles.image}
@@ -17,6 +43,10 @@ const ListItem = (props) => {
       </View>
     </TouchableOpacity>
   );
+};
+
+ListItem.propTypes = {
+  singleMedia: PropTypes.object,
 };
 
 const styles = StyleSheet.create({
@@ -43,10 +73,18 @@ const styles = StyleSheet.create({
     flex: 2,
     padding: 10,
   },
+  openButton: {
+    backgroundColor: '#F194FF',
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  modalContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
 });
-
-ListItem.propTypes = {
-  singleMedia: PropTypes.object,
-};
 
 export default ListItem;
