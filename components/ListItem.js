@@ -21,17 +21,19 @@ const ListItem = (props) => {
       <Modal visible={modalOpen} animationType="slide">
         <View style={styles.modalContent}>
           <View style={styles.modalView}>
-            <Text style={styles.headerText}>Image filename: </Text>
-            <Text style={styles.mediaFilename}>
-              {props.singleMedia.filename}
-            </Text>
+            <Text style={styles.headerText}>Filename Image: </Text>
+            <Image
+              style={styles.mediaFilename}
+              source={{uri: props.singleMedia.filename}}
+            />
+
             <TouchableHighlight
               style={{...styles.openButton, backgroundColor: '#2196F3'}}
               onPress={() => {
                 setmodalOpen(!modalOpen);
               }}
             >
-              <Text style={styles.textStyle}>Hide Modal</Text>
+              <Text style={styles.textStyle}>Go Back</Text>
             </TouchableHighlight>
           </View>
         </View>
@@ -94,7 +96,7 @@ const styles = StyleSheet.create({
     margin: 20,
     backgroundColor: 'lightblue',
     borderRadius: 20,
-    padding: 35,
+    padding: 100,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
@@ -113,8 +115,8 @@ const styles = StyleSheet.create({
     color: 'purple',
   },
   mediaFilename: {
-    fontSize: 18,
-    color: 'green',
+    height: 200,
+    width: 200,
   },
 });
 
