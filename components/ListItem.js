@@ -10,6 +10,8 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 
+const uploadUrl = 'http://media.mw.metropolia.fi/wbma/uploads/';
+
 const ListItem = (props) => {
   const [modalOpen, setmodalOpen] = useState(false);
 
@@ -24,7 +26,7 @@ const ListItem = (props) => {
             <Text style={styles.headerText}>Filename Image: </Text>
             <Image
               style={styles.mediaFilename}
-              source={{uri: props.singleMedia.filename}}
+              source={{uri: uploadUrl + props.singleMedia.filename}}
             />
 
             <TouchableHighlight
@@ -41,7 +43,7 @@ const ListItem = (props) => {
       <View style={styles.imagebox}>
         <Image
           style={styles.image}
-          source={{uri: props.singleMedia.thumbnails.w160}}
+          source={{uri: uploadUrl + props.singleMedia.thumbnails.w160}}
         />
       </View>
       <View style={styles.textbox}>
