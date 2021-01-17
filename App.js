@@ -9,6 +9,7 @@ import {
   Image,
   TouchableOpacity,
   View,
+  Dimensions,
 } from 'react-native';
 import {Menu, Settings} from 'react-native-feather';
 import GlobalStyles from './GlobalStyles';
@@ -52,6 +53,7 @@ const Flexboxdemo = () => {
       <View style={styles.container}>
         <View style={styles.header}>
           <ImageBackground
+            // eslint-disable-next-line no-undef
             source={require('./assets/c.jpg')}
             style={styles.bgImage}
             imageStyle={{borderBottomRightRadius: 65}}
@@ -80,12 +82,12 @@ const Flexboxdemo = () => {
               data={mediaArray}
               renderItem={({item}) => {
                 return (
-                  <TouchableOpacity>
+                  <TouchableOpacity style={styles.catpic}>
                     <Image
-                      style={{width: 100, height: 100}}
+                      style={styles.image}
                       source={{uri: item.thumbnails.w160}}
                     />
-                    <View style={styles.contento}>
+                    <View style={styles.catInfo}>
                       <Text>{item.title}</Text>
                       <Text>{item.description}</Text>
                     </View>
@@ -95,7 +97,6 @@ const Flexboxdemo = () => {
             />
           </View>
         </View>
-        <View style={styles.footerArea} />
         <StatusBar backgroundColor="aquamarine" barStyle="light" />
       </View>
     </SafeAreaView>
@@ -106,7 +107,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'space-around',
-    backgroundColor: 'yellow',
+    // backgroundColor: 'yellow',
     height: '100%',
     paddingTop: 0,
   },
@@ -115,7 +116,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'powderblue',
   },
   bgImage: {
-    width: '100%',
+    width: Dimensions.get('window').width,
     height: 270,
   },
   menu: {
@@ -137,22 +138,34 @@ const styles = StyleSheet.create({
   infoArea: {
     flex: 6,
     flexDirection: 'column',
-    backgroundColor: 'skyblue',
+    //backgroundColor: 'skyblue',
   },
   areaA: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'pink',
+    //  backgroundColor: 'pink',
   },
   areaB: {
     flex: 8,
-    backgroundColor: 'green',
     padding: 20,
+  },
+  catpic: {
+    width: 170,
+  },
+  image: {
+    width: 100,
+    height: 100,
+    marginRight: 10,
+    borderRadius: 5,
+  },
+  catInfo: {
+    //backgroundColor: 'orange',
+    width: 150,
   },
   footerArea: {
     flex: 1,
-    backgroundColor: 'steelblue',
+    //backgroundColor: 'steelblue',
   },
 });
 
