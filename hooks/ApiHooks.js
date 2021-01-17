@@ -27,7 +27,7 @@ const useLoadMedia = () => {
   };
   // TODO: move useEffect here
   useEffect(() => {
-    loadMedia(3);
+    loadMedia(10);
   }, []);
 
   return mediaArray;
