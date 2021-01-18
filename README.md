@@ -1,4 +1,4 @@
 # WBMA-First-App
 
-#Assignment: Navigation
+#Assignment: Login
 #React-Native
