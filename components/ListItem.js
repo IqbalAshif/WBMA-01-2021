@@ -9,16 +9,15 @@ import {
   TouchableHighlight,
 } from 'react-native';
 import PropTypes from 'prop-types';
+import {uploadUrl} from '../utils/variables';
 
-const uploadUrl = 'http://media.mw.metropolia.fi/wbma/uploads/';
-
-const ListItem = (props) => {
+const ListItem = ({navigation, singleMedia}) => {
   const [modalOpen, setmodalOpen] = useState(false);
 
   return (
     <TouchableOpacity
       style={styles.row}
-      onPress={() => setmodalOpen(!modalOpen)}
+      onPress={() => navigation.navigate('Single', {file: singleMedia})}
     >
       <Modal visible={modalOpen} animationType="slide">
         <View style={styles.modalContent}>
@@ -26,7 +25,7 @@ const ListItem = (props) => {
             <Text style={styles.headerText}>Filename Image: </Text>
             <Image
               style={styles.mediaFilename}
-              source={{uri: uploadUrl + props.singleMedia.filename}}
+              source={{uri: uploadUrl + singleMedia.filename}}
             />
 
             <TouchableHighlight
@@ -43,12 +42,12 @@ const ListItem = (props) => {
       <View style={styles.imagebox}>
         <Image
           style={styles.image}
-          source={{uri: uploadUrl + props.singleMedia.thumbnails.w160}}
+          source={{uri: uploadUrl + singleMedia.thumbnails.w160}}
         />
       </View>
       <View style={styles.textbox}>
-        <Text style={styles.listTitle}>{props.singleMedia.title}</Text>
-        <Text>{props.singleMedia.description}</Text>
+        <Text style={styles.listTitle}>{singleMedia.title}</Text>
+        <Text>{singleMedia.description}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -56,6 +55,7 @@ const ListItem = (props) => {
 
 ListItem.propTypes = {
   singleMedia: PropTypes.object,
+  navigation: PropTypes.object,
 };
 
 const styles = StyleSheet.create({

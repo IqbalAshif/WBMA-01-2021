@@ -1,3 +1,4 @@
 # WBMA-First-App
-#Assignment: Front-end 1: First App
+
+#Assignment: Navigation
 #React-Native
