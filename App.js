@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
   infoArea: {
     flex: 6,
     flexDirection: 'column',
-    //backgroundColor: 'skyblue',
+    // backgroundColor: 'skyblue',
   },
   areaA: {
     flex: 1,
@@ -160,12 +160,12 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   catInfo: {
-    //backgroundColor: 'orange',
+    // backgroundColor: 'orange',
     width: 150,
   },
   footerArea: {
     flex: 1,
-    //backgroundColor: 'steelblue',
+    // backgroundColor: 'steelblue',
   },
 });
 
