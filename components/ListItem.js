@@ -1,44 +1,14 @@
-import React, {useState} from 'react';
-import {
-  Image,
-  TouchableOpacity,
-  View,
-  Text,
-  StyleSheet,
-  Modal,
-  TouchableHighlight,
-} from 'react-native';
+import React from 'react';
+import {Image, TouchableOpacity, View, Text, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
 import {uploadUrl} from '../utils/variables';
 
 const ListItem = ({navigation, singleMedia}) => {
-  const [modalOpen, setmodalOpen] = useState(false);
-
   return (
     <TouchableOpacity
       style={styles.row}
       onPress={() => navigation.navigate('Single', {file: singleMedia})}
     >
-      <Modal visible={modalOpen} animationType="slide">
-        <View style={styles.modalContent}>
-          <View style={styles.modalView}>
-            <Text style={styles.headerText}>Filename Image: </Text>
-            <Image
-              style={styles.mediaFilename}
-              source={{uri: uploadUrl + singleMedia.filename}}
-            />
-
-            <TouchableHighlight
-              style={{...styles.openButton, backgroundColor: '#2196F3'}}
-              onPress={() => {
-                setmodalOpen(!modalOpen);
-              }}
-            >
-              <Text style={styles.textStyle}>Go Back</Text>
-            </TouchableHighlight>
-          </View>
-        </View>
-      </Modal>
       <View style={styles.imagebox}>
         <Image
           style={styles.image}
