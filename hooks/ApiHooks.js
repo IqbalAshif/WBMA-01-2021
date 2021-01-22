@@ -32,5 +32,72 @@ const useLoadMedia = () => {
 
   return mediaArray;
 };
+const useLogin = () => {
+  const postLogin = async (userCredentials) => {
+    const options = {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(userCredentials),
+    };
+    try {
+      const response = await fetch(apiUrl + 'login', options);
+      const userData = await response.json();
+      console.log('postLogin response status', response.status);
+      console.log('postlogin userData', userData);
+      if (response.ok) {
+        return userData;
+      } else {
+        throw new Error(userData.message);
+      }
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  };
+  const checkToken = async (token) => {
+    try {
+      const options = {
+        method: 'GET',
+        headers: {'x-access-token': token},
+      };
+      const response = await fetch(apiUrl + 'users/user', options);
+      const userData = response.json();
+      if (response.ok) {
+        return userData;
+      } else {
+        throw new Error(userData.message);
+      }
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  };
+  return {postLogin, checkToken};
+};
 
-export {useLoadMedia};
+const useRegister = () => {
+  const postRegister = async (inputs) => {
+    console.log('trying to create user', inputs);
+    const fetchOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(inputs),
+    };
+    try {
+      const response = await fetch(apiUrl + 'users', fetchOptions);
+      const json = await response.json();
+      console.log('register resp', json);
+      if (response.ok) {
+        return json;
+      } else {
+        throw new Error(json.message + ': ' + json.error);
+      }
+    } catch (e) {
+      console.log('ApiHooks register', e.message);
+      throw new Error(e.message);
+    }
+  };
+  return {postRegister};
+};
+
+export {useLoadMedia, useLogin, useRegister};
