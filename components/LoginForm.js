@@ -1,11 +1,28 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {View, Button} from 'react-native';
 import useLoginForm from '../hooks/loginHooks';
 import FormTextInput from './FormTextInput';
 import PropTypes from 'prop-types';
+import {useLogin} from '../hooks/ApiHooks';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {MainContext} from '../contexts/MainContext';
 
 const LoginForm = ({navigation}) => {
   const {inputs, handleInputChange} = useLoginForm();
+  const {postLogin} = useLogin();
+  const {setIsLoggedIn, setUser} = useContext(MainContext);
+
+  const doLogin = async () => {
+    try {
+      const userData = await postLogin(inputs);
+      setIsLoggedIn(true);
+      setUser(userData.user);
+      await AsyncStorage.setItem('userToken', userData.token);
+    } catch (error) {
+      console.error('postLogin error', error);
+      // TODO: Add user notification about login error
+    }
+  };
   return (
     <View>
       <FormTextInput
@@ -19,7 +36,7 @@ const LoginForm = ({navigation}) => {
         onChangeText={(txt) => handleInputChange('password', txt)}
         secureTextEntry={true}
       />
-      {/* <Button title="Register!" onPress={doRegister} /> */}
+      {<Button title="Login!" onPress={doLogin} />}
     </View>
   );
 };

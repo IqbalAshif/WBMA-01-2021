@@ -10,7 +10,6 @@ const useLoadMedia = () => {
     try {
       const listResponse = await fetch(apiUrl + 'media?limit=' + limit);
       const listJson = await listResponse.json();
-      console.log('response json data', listJson);
 
       const media = await Promise.all(
         listJson.map(async (item) => {
@@ -19,7 +18,7 @@ const useLoadMedia = () => {
           return fileJson;
         })
       );
-      console.log('media array data', media);
+
       setMediaArray(media);
     } catch (error) {
       console.error('loadMedia error', error);
@@ -60,7 +59,7 @@ const useLogin = () => {
         headers: {'x-access-token': token},
       };
       const response = await fetch(apiUrl + 'users/user', options);
-      const userData = response.json();
+      const userData = await response.json();
       if (response.ok) {
         return userData;
       } else {
