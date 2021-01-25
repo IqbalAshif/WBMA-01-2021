@@ -1,12 +1,12 @@
 import React from 'react';
-import {Image, TouchableOpacity, View, Text, StyleSheet} from 'react-native';
+import {Image, View, Text, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
 import {uploadUrl} from '../utils/variables';
+import {ListItem as RNEListItem} from 'react-native-elements';
 
 const ListItem = ({navigation, singleMedia}) => {
   return (
-    <TouchableOpacity
-      style={styles.row}
+    <RNEListItem
       onPress={() => navigation.navigate('Single', {file: singleMedia})}
     >
       <View style={styles.imagebox}>
@@ -19,7 +19,7 @@ const ListItem = ({navigation, singleMedia}) => {
         <Text style={styles.listTitle}>{singleMedia.title}</Text>
         <Text>{singleMedia.description}</Text>
       </View>
-    </TouchableOpacity>
+    </RNEListItem>
   );
 };
 
