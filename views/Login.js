@@ -1,15 +1,23 @@
-import React, {useContext, useEffect} from 'react';
-import {View, StyleSheet, KeyboardAvoidingView, Platform} from 'react-native';
+import React, {useContext, useEffect, useState} from 'react';
+import {
+  View,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import PropTypes from 'prop-types';
 import {MainContext} from '../contexts/MainContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useUser} from '../hooks/ApiHooks';
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
-import {Card, Text} from 'react-native-elements';
+import {Card, ListItem, Text} from 'react-native-elements';
 
 const Login = ({navigation}) => {
   const {isLoggedIn, setIsLoggedIn, setUser} = useContext(MainContext);
+  const [formToggle, setFormToggle] = useState(true);
   console.log('isLoggedIn?', isLoggedIn);
   const {checkToken} = useUser();
 
@@ -35,22 +43,46 @@ const Login = ({navigation}) => {
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      enabled
     >
-      <View style={styles.appName}>
-        <Text h1>My App</Text>
-      </View>
-      <View style={styles.form}>
-        <Card>
-          <Card.Title h4>Login</Card.Title>
-          <Card.Divider />
-          <LoginForm navigation={navigation} />
-        </Card>
-        <Card>
-          <Card.Title h4>Register</Card.Title>
-          <Card.Divider />
-          <RegisterForm navigation={navigation} />
-        </Card>
-      </View>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.inner}>
+          <View style={styles.appName}>
+            <Text h1>My App</Text>
+          </View>
+          <View style={styles.form}>
+            <Card>
+              {formToggle ? (
+                <>
+                  <Card.Title h4>Login</Card.Title>
+                  <Card.Divider />
+                  <LoginForm navigation={navigation} />
+                </>
+              ) : (
+                <>
+                  <Card.Title h4>Register</Card.Title>
+                  <Card.Divider />
+                  <RegisterForm navigation={navigation} />
+                </>
+              )}
+              <ListItem
+                onPress={() => {
+                  setFormToggle(!formToggle);
+                }}
+              >
+                <ListItem.Content>
+                  <Text style={styles.text}>
+                    {formToggle
+                      ? 'No account? Please register.'
+                      : 'Alreadt registered. Login here.'}
+                  </Text>
+                </ListItem.Content>
+                <ListItem.Chevron />
+              </ListItem>
+            </Card>
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
 };
@@ -58,15 +90,23 @@ const Login = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 15,
+  },
+  inner: {
+    padding: 24,
+    flex: 1,
+    justifyContent: 'space-around',
   },
   form: {
-    flex: 4,
+    flex: 2,
   },
   appName: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  text: {
+    alignSelf: 'center',
+    padding: 20,
   },
 });
 
