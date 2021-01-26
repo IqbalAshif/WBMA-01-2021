@@ -2,34 +2,36 @@ import {useState, useEffect} from 'react';
 
 import {apiUrl} from '../utils/variables';
 
+// general function for fetching (options default value is empty object)
 const doFetch = async (url, options = {}) => {
   const response = await fetch(url, options);
-  if (!response.ok) {
+  const json = await response.json();
+  if (json.error) {
+    // if API response contains error message (use Postman to get further details)
+    throw new Error(json.message + ': ' + json.error);
+  } else if (!response.ok) {
+    // if API response does not contain error message, but there is some other error
     throw new Error('doFetch failed');
+  } else {
+    // if all goes well
+    return json;
   }
-  return await response.json();
 };
-
 const useLoadMedia = () => {
-  // TODO: move mediaArray state here
   const [mediaArray, setMediaArray] = useState([]);
-  // TODO: move loadMedia function here
   const loadMedia = async (limit = 5) => {
     try {
-      const listResponse = await fetch(apiUrl + 'media?limit=' + limit);
-      const listJson = await listResponse.json();
+      const listJson = await doFetch(apiUrl + 'media?limit=' + limit);
 
       const media = await Promise.all(
         listJson.map(async (item) => {
-          const fileResponse = await fetch(apiUrl + 'media/' + item.file_id);
-          const fileJson = await fileResponse.json();
+          const fileJson = await doFetch(apiUrl + 'media/' + item.file_id);
           return fileJson;
         })
       );
-
       setMediaArray(media);
     } catch (error) {
-      console.error('loadMedia error', error);
+      console.error('loadMedia error', error.message);
     }
   };
   // TODO: move useEffect here
@@ -50,7 +52,7 @@ const useLogin = () => {
       const userData = await doFetch(apiUrl + 'login', options);
       return userData;
     } catch (error) {
-      throw new Error(error.message);
+      throw new Error('postLogin error: ' + error.message);
     }
   };
   return {postLogin};
@@ -67,37 +69,40 @@ const useUser = () => {
       body: JSON.stringify(inputs),
     };
     try {
-      const response = await fetch(apiUrl + 'users', fetchOptions);
-      const json = await response.json();
+      const json = await doFetch(apiUrl + 'users', fetchOptions);
       console.log('register resp', json);
-      if (response.ok) {
-        return json;
-      } else {
-        throw new Error(json.message + ': ' + json.error);
-      }
+      return json;
     } catch (e) {
-      console.log('ApiHooks register', e.message);
       throw new Error(e.message);
     }
   };
+
   const checkToken = async (token) => {
     try {
       const options = {
         method: 'GET',
         headers: {'x-access-token': token},
       };
-      const response = await fetch(apiUrl + 'users/user', options);
-      const userData = await response.json();
-      if (response.ok) {
-        return userData;
-      } else {
-        throw new Error(userData.message);
-      }
+      const userData = await doFetch(apiUrl + 'users/user', options);
+      return userData;
     } catch (error) {
       throw new Error(error.message);
     }
   };
+
   return {postRegister, checkToken};
 };
 
-export {useLoadMedia, useLogin, useUser};
+const useTag = () => {
+  const getFilesByTag = async (tag) => {
+    try {
+      const tagList = await doFetch(apiUrl + 'tags/' + tag);
+      return tagList;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  };
+  return {getFilesByTag};
+};
+
+export {useLoadMedia, useLogin, useUser, useTag};
