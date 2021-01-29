@@ -89,8 +89,16 @@ const useUser = () => {
       throw new Error(error.message);
     }
   };
+  const checkIfUserIsAvailable = async (username) => {
+    try {
+      const result = await doFetch(apiUrl + 'users/username/' + username);
+      return result.available;
+    } catch (error) {
+      throw new Error('apiHooks checkIfUserIsAvailable', error.message);
+    }
+  };
 
-  return {postRegister, checkToken};
+  return {postRegister, checkToken, checkIfUserIsAvailable};
 };
 
 const useTag = () => {

@@ -9,7 +9,12 @@ import {MainContext} from '../contexts/MainContext';
 
 const RegisterForm = ({navigation}) => {
   const {setIsLoggedIn, setUser} = useContext(MainContext);
-  const {inputs, handleInputChange} = useSignUpForm();
+  const {
+    inputs,
+    handleInputChange,
+    usernameError,
+    checkUserAvailability,
+  } = useSignUpForm();
   const {postRegister} = useUser();
   const {postLogin} = useLogin();
 
@@ -35,6 +40,10 @@ const RegisterForm = ({navigation}) => {
         autoCapitalize="none"
         placeholder="username"
         onChangeText={(txt) => handleInputChange('username', txt)}
+        onEndEditing={(event) => {
+          checkUserAvailability(event);
+        }}
+        errorMessage={usernameError}
       />
       <FormTextInput
         autoCapitalize="none"
