@@ -12,14 +12,22 @@ const RegisterForm = ({navigation}) => {
   const {
     inputs,
     handleInputChange,
-    usernameError,
+    registerErrors,
     checkUserAvailability,
+    handleInputEnd,
+    validateOnSend,
   } = useSignUpForm();
   const {postRegister} = useUser();
   const {postLogin} = useLogin();
 
   const doRegister = async () => {
     try {
+      if (!validateOnSend()) {
+        Alert.alert('Input validation failed!');
+        console.log('validateOnSend failed');
+        return;
+      }
+      delete inputs.confirmPassword;
       const result = await postRegister(inputs);
       console.log('doRegister ok', result.message);
       Alert.alert(result.message);
@@ -42,24 +50,47 @@ const RegisterForm = ({navigation}) => {
         onChangeText={(txt) => handleInputChange('username', txt)}
         onEndEditing={(event) => {
           checkUserAvailability(event);
+          handleInputEnd('username', event.nativeEvent.text);
         }}
-        errorMessage={usernameError}
+        errorMessage={registerErrors.username}
       />
       <FormTextInput
         autoCapitalize="none"
         placeholder="password"
         onChangeText={(txt) => handleInputChange('password', txt)}
+        onEndEditing={(event) =>
+          handleInputEnd('password', event.nativeEvent.text)
+        }
         secureTextEntry={true}
+        errorMessage={registerErrors.password}
+      />
+      <FormTextInput
+        autoCapitalize="none"
+        placeholder="confirm password"
+        onChangeText={(txt) => handleInputChange('confirmPassword', txt)}
+        onEndEditing={(event) =>
+          handleInputEnd('confirmPassword', event.nativeEvent.text)
+        }
+        secureTextEntry={true}
+        errorMessage={registerErrors.confirmPassword}
       />
       <FormTextInput
         autoCapitalize="none"
         placeholder="email"
         onChangeText={(txt) => handleInputChange('email', txt)}
+        onEndEditing={(event) => {
+          handleInputChange('email', event.nativeEvent.text);
+        }}
+        errorMessage={registerErrors.email}
       />
       <FormTextInput
         autoCapitalize="none"
         placeholder="full name"
         onChangeText={(txt) => handleInputChange('full_name', txt)}
+        onEndEditing={(event) =>
+          handleInputEnd('full_name', event.nativeEvent.text)
+        }
+        errorMessage={registerErrors.full_name}
       />
       <Button title="Register!" onPress={doRegister} />
     </View>

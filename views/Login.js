@@ -14,6 +14,7 @@ import {useUser} from '../hooks/ApiHooks';
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
 import {Card, ListItem, Text} from 'react-native-elements';
+import {ScrollView} from 'react-native-gesture-handler';
 
 const Login = ({navigation}) => {
   const {isLoggedIn, setIsLoggedIn, setUser} = useContext(MainContext);
@@ -40,50 +41,52 @@ const Login = ({navigation}) => {
   }, []);
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      enabled
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.inner}>
-          <View style={styles.appName}>
-            <Text h1>My App</Text>
+    <ScrollView>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        enabled
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.inner}>
+            <View style={styles.appName}>
+              <Text h1>My App</Text>
+            </View>
+            <View style={styles.form}>
+              <Card>
+                {formToggle ? (
+                  <>
+                    <Card.Title h4>Login</Card.Title>
+                    <Card.Divider />
+                    <LoginForm navigation={navigation} />
+                  </>
+                ) : (
+                  <>
+                    <Card.Title h4>Register</Card.Title>
+                    <Card.Divider />
+                    <RegisterForm navigation={navigation} />
+                  </>
+                )}
+                <ListItem
+                  onPress={() => {
+                    setFormToggle(!formToggle);
+                  }}
+                >
+                  <ListItem.Content>
+                    <Text style={styles.text}>
+                      {formToggle
+                        ? 'No account? Please register.'
+                        : 'Already registered. Login here.'}
+                    </Text>
+                  </ListItem.Content>
+                  <ListItem.Chevron />
+                </ListItem>
+              </Card>
+            </View>
           </View>
-          <View style={styles.form}>
-            <Card>
-              {formToggle ? (
-                <>
-                  <Card.Title h4>Login</Card.Title>
-                  <Card.Divider />
-                  <LoginForm navigation={navigation} />
-                </>
-              ) : (
-                <>
-                  <Card.Title h4>Register</Card.Title>
-                  <Card.Divider />
-                  <RegisterForm navigation={navigation} />
-                </>
-              )}
-              <ListItem
-                onPress={() => {
-                  setFormToggle(!formToggle);
-                }}
-              >
-                <ListItem.Content>
-                  <Text style={styles.text}>
-                    {formToggle
-                      ? 'No account? Please register.'
-                      : 'Alreadt registered. Login here.'}
-                  </Text>
-                </ListItem.Content>
-                <ListItem.Chevron />
-              </ListItem>
-            </Card>
-          </View>
-        </View>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </ScrollView>
   );
 };
 
