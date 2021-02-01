@@ -3,7 +3,6 @@ import {
   View,
   StyleSheet,
   KeyboardAvoidingView,
-  Platform,
   Keyboard,
   TouchableWithoutFeedback,
 } from 'react-native';
@@ -44,7 +43,7 @@ const Login = ({navigation}) => {
     <ScrollView>
       <KeyboardAvoidingView
         style={styles.container}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={'padding'}
         enabled
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
