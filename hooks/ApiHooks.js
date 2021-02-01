@@ -97,8 +97,23 @@ const useUser = () => {
       throw new Error('apiHooks checkIfUserIsAvailable', error.message);
     }
   };
+  const getUserById = async (id, token) => {
+    try {
+      const options = {
+        headers: {
+          method: 'GET',
+          'x-access-token': token,
+        },
+      };
 
-  return {postRegister, checkToken, checkIfUserIsAvailable};
+      const userData = await doFetch(apiUrl + 'users/' + id, options);
+      return userData;
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  };
+
+  return {postRegister, checkToken, checkIfUserIsAvailable, getUserById};
 };
 
 const useTag = () => {

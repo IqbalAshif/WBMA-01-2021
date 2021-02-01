@@ -1,22 +1,23 @@
-import React, {useContext, useState, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyleSheet, ActivityIndicator} from 'react-native';
 import PropTypes from 'prop-types';
 import {uploadUrl} from '../utils/variables';
 import {Avatar, Card, ListItem, Text} from 'react-native-elements';
 import moment from 'moment';
-import {MainContext} from '../contexts/MainContext';
-import {useTag} from '../hooks/ApiHooks';
+import {useTag, useUser} from '../hooks/ApiHooks';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Single = ({route}) => {
-  const {user} = useContext(MainContext);
   const [avatar, setAvatar] = useState('http://placekitten.com/200/300');
   const {getFilesByTag} = useTag();
   const {file} = route.params;
+  const {getUserById} = useUser();
+  const [owner, setOwner] = useState('Somebody');
 
   useEffect(() => {
     const fetchAvatar = async () => {
       try {
-        const avatarList = await getFilesByTag('avatar_' + user.user_id);
+        const avatarList = await getFilesByTag('avatar_' + file.user_id);
         if (avatarList.length > 0) {
           setAvatar(uploadUrl + avatarList.pop().filename);
         }
@@ -24,7 +25,17 @@ const Single = ({route}) => {
         console.error(error.message);
       }
     };
+    const getUserInfo = async () => {
+      const token = await AsyncStorage.getItem('userToken');
+      try {
+        const user = await getUserById(file.user_id, token);
+        setOwner(user.username);
+      } catch (e) {
+        console.error(e.message);
+      }
+    };
     fetchAvatar();
+    getUserInfo();
   }, []);
 
   return (
@@ -41,7 +52,7 @@ const Single = ({route}) => {
       <Text style={styles.description}>{file.description}</Text>
       <ListItem>
         <Avatar source={{uri: avatar}} />
-        <Text>{user.full_name}</Text>
+        <Text>{owner}</Text>
       </ListItem>
     </Card>
   );
