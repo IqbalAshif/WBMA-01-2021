@@ -3,7 +3,7 @@ import {StyleSheet, ActivityIndicator} from 'react-native';
 import {MainContext} from '../contexts/MainContext';
 import PropTypes from 'prop-types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Card, Text, Button, ListItem, Avatar} from 'react-native-elements';
+import {Card, Text, ListItem, Avatar} from 'react-native-elements';
 import {useTag} from '../hooks/ApiHooks';
 import {uploadUrl} from '../utils/variables';
 import {ScrollView} from 'react-native-gesture-handler';
@@ -48,10 +48,20 @@ const Profile = ({navigation}) => {
           PlaceholderContent={<ActivityIndicator />}
         />
         <ListItem>
+          <Avatar icon={{name: 'email', color: 'black'}} />
+          <Text>{user.email}</Text>
+        </ListItem>
+        <ListItem>
           <Avatar icon={{name: 'user', type: 'font-awesome', color: 'black'}} />
           <Text>{user.full_name}</Text>
         </ListItem>
-        <Button title={'Logout'} onPress={logout} />
+        <ListItem bottomDivider onPress={logout}>
+          <Avatar icon={{name: 'logout', color: 'black'}} />
+          <ListItem.Content>
+            <ListItem.Title>Logout</ListItem.Title>
+          </ListItem.Content>
+          <ListItem.Chevron />
+        </ListItem>
       </Card>
     </ScrollView>
   );
