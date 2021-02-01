@@ -1,12 +1,32 @@
-import React from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {StyleSheet, ActivityIndicator} from 'react-native';
 import PropTypes from 'prop-types';
 import {uploadUrl} from '../utils/variables';
 import {Avatar, Card, ListItem, Text} from 'react-native-elements';
 import moment from 'moment';
+import {MainContext} from '../contexts/MainContext';
+import {useTag} from '../hooks/ApiHooks';
 
 const Single = ({route}) => {
+  const {user} = useContext(MainContext);
+  const [avatar, setAvatar] = useState('http://placekitten.com/200/300');
+  const {getFilesByTag} = useTag();
   const {file} = route.params;
+
+  useEffect(() => {
+    const fetchAvatar = async () => {
+      try {
+        const avatarList = await getFilesByTag('avatar_' + user.user_id);
+        if (avatarList.length > 0) {
+          setAvatar(uploadUrl + avatarList.pop().filename);
+        }
+      } catch (error) {
+        console.error(error.message);
+      }
+    };
+    fetchAvatar();
+  }, []);
+
   return (
     <Card>
       <Card.Title h4>{file.title}</Card.Title>
@@ -20,8 +40,8 @@ const Single = ({route}) => {
       <Card.Divider />
       <Text style={styles.description}>{file.description}</Text>
       <ListItem>
-        <Avatar source={{uri: 'http://placekitten.com/200/300'}} />
-        <Text>Ownername</Text>
+        <Avatar source={{uri: avatar}} />
+        <Text>{user.full_name}</Text>
       </ListItem>
     </Card>
   );
