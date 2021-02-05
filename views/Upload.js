@@ -4,17 +4,19 @@ import {Platform, ScrollView, ActivityIndicator, Alert} from 'react-native';
 import useUploadForm from '../hooks/UploadHooks';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useMedia} from '../hooks/ApiHooks';
+import {useMedia, useTag} from '../hooks/ApiHooks';
 import PropTypes from 'prop-types';
 import {MainContext} from '../contexts/MainContext';
+import {appIdentifier} from '../utils/variables';
 
 const Upload = ({navigation}) => {
-  const {handleInputChange, inputs} = useUploadForm();
+  const {handleInputChange, inputs, uploadErrors, reset} = useUploadForm();
   const [image, setImage] = useState(null);
   const [fileType, setFileType] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const {upload} = useMedia();
   const {update, setUpdate} = useContext(MainContext);
+  const {postTag} = useTag();
 
   const doUpload = async () => {
     const formData = new FormData();
@@ -38,6 +40,14 @@ const Upload = ({navigation}) => {
       const userToken = await AsyncStorage.getItem('userToken');
       const resp = await upload(formData, userToken);
       console.log('upload response', resp);
+      const tagResponse = await postTag(
+        {
+          file_id: resp.file_id,
+          tag: appIdentifier,
+        },
+        userToken
+      );
+      console.log('posting app identifier', tagResponse);
       Alert.alert(
         'Upload',
         'File uploaded',
@@ -46,6 +56,7 @@ const Upload = ({navigation}) => {
             text: 'Ok',
             onPress: () => {
               setUpdate(update + 1);
+              doReset();
               navigation.navigate('Home');
             },
           },
@@ -96,6 +107,10 @@ const Upload = ({navigation}) => {
     }
   };
 
+  const doReset = () => {
+    setImage(null);
+    reset();
+  };
   return (
     <ScrollView>
       <Text h4>Upload Media file</Text>
@@ -110,16 +125,27 @@ const Upload = ({navigation}) => {
         placeholder="title"
         value={inputs.title}
         onChangeText={(txt) => handleInputChange('title', txt)}
+        errorMessage={uploadErrors.title}
       />
       <Input
         placeholder="description"
         value={inputs.description}
         onChangeText={(txt) => handleInputChange('description', txt)}
+        errorMessage={uploadErrors.description}
       />
       <Button title="Choose File" onPress={() => pickImage(true)} />
       <Button title="Use camera" onPress={() => pickImage(false)} />
       {isUploading && <ActivityIndicator size="large" color="#0000ff" />}
-      <Button title="Upload File" onPress={doUpload} />
+      <Button
+        title="Upload File"
+        onPress={doUpload}
+        disabled={
+          uploadErrors.title !== null ||
+          uploadErrors.description !== null ||
+          image === null
+        }
+      />
+      <Button title="Reset" onPress={doReset} />
     </ScrollView>
   );
 };

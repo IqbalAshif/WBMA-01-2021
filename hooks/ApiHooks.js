@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {useState, useEffect, useContext} from 'react';
 import {MainContext} from '../contexts/MainContext';
-import {apiUrl} from '../utils/variables';
+import {apiUrl, appIdentifier} from '../utils/variables';
 
 // general function for fetching (options default value is empty object)
 const doFetch = async (url, options = {}) => {
@@ -18,12 +18,17 @@ const doFetch = async (url, options = {}) => {
     return json;
   }
 };
-const useLoadMedia = () => {
+const useLoadMedia = (all = false, limit = 10) => {
   const [mediaArray, setMediaArray] = useState([]);
   const {update} = useContext(MainContext);
   const loadMedia = async (limit = 5) => {
     try {
-      const listJson = await doFetch(apiUrl + 'media?limit=' + limit);
+      let listJson;
+      if (all) {
+        listJson = await doFetch(apiUrl + 'media?limit=' + limit);
+      } else {
+        listJson = await doFetch(apiUrl + 'tags/' + appIdentifier);
+      }
 
       const media = await Promise.all(
         listJson.map(async (item) => {
@@ -38,7 +43,10 @@ const useLoadMedia = () => {
   };
   // TODO: move useEffect here
   useEffect(() => {
-    loadMedia(10);
+    // load everything
+    // loadMedia(true, 10);
+    // loads app by id
+    loadMedia();
   }, [update]);
 
   return mediaArray;
@@ -127,7 +135,21 @@ const useTag = () => {
       throw new Error(error.message);
     }
   };
-  return {getFilesByTag};
+
+  const postTag = async (tag, token) => {
+    const options = {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', 'x-access-token': token},
+      body: JSON.stringify(tag),
+    };
+    try {
+      const result = await doFetch(apiUrl + 'tags', options);
+      return result;
+    } catch (error) {
+      throw new Error('postTag error: ' + error.message);
+    }
+  };
+  return {getFilesByTag, postTag};
 };
 
 const useMedia = () => {
