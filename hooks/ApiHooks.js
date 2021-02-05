@@ -1,5 +1,6 @@
 import axios from 'axios';
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useContext} from 'react';
+import {MainContext} from '../contexts/MainContext';
 import {apiUrl} from '../utils/variables';
 
 // general function for fetching (options default value is empty object)
@@ -19,6 +20,7 @@ const doFetch = async (url, options = {}) => {
 };
 const useLoadMedia = () => {
   const [mediaArray, setMediaArray] = useState([]);
+  const {update} = useContext(MainContext);
   const loadMedia = async (limit = 5) => {
     try {
       const listJson = await doFetch(apiUrl + 'media?limit=' + limit);
@@ -37,7 +39,7 @@ const useLoadMedia = () => {
   // TODO: move useEffect here
   useEffect(() => {
     loadMedia(10);
-  }, []);
+  }, [update]);
 
   return mediaArray;
 };

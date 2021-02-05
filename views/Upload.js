@@ -1,15 +1,20 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {Text, Image, Input, Button} from 'react-native-elements';
-import {Platform, ScrollView} from 'react-native';
+import {Platform, ScrollView, ActivityIndicator, Alert} from 'react-native';
 import useUploadForm from '../hooks/UploadHooks';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useMedia} from '../hooks/ApiHooks';
+import PropTypes from 'prop-types';
+import {MainContext} from '../contexts/MainContext';
 
-const Upload = () => {
+const Upload = ({navigation}) => {
   const {handleInputChange, inputs} = useUploadForm();
   const [image, setImage] = useState(null);
+  const [fileType, setFileType] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
   const {upload} = useMedia();
+  const {update, setUpdate} = useContext(MainContext);
 
   const doUpload = async () => {
     const formData = new FormData();
@@ -17,14 +22,41 @@ const Upload = () => {
     formData.append('title', inputs.title);
     formData.append('description', inputs.description);
     // add image to form data
-    formData.append('file', {uri: image, name: 'filename', type: 'image/jpeg'});
+    const filename = image.split('/').pop();
+    const match = /\.(\w+)$/.exec(filename);
+    let type = match ? `${fileType}/${match[1]}` : fileType;
+    if (type === 'image/jpg') type = 'image/jpeg';
+
+    formData.append('file', {
+      uri: image,
+      name: filename,
+      type: type,
+    });
 
     try {
+      setIsUploading(true);
       const userToken = await AsyncStorage.getItem('userToken');
       const resp = await upload(formData, userToken);
       console.log('upload response', resp);
+      Alert.alert(
+        'Upload',
+        'File uploaded',
+        [
+          {
+            text: 'Ok',
+            onPress: () => {
+              setUpdate(update + 1);
+              navigation.navigate('Home');
+            },
+          },
+        ],
+        {cancelable: false}
+      );
     } catch (error) {
+      Alert.alert('Upload', 'Failed');
       console.error(error);
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -59,6 +91,7 @@ const Upload = () => {
     console.log(result);
 
     if (!result.cancelled) {
+      setFileType(result.type);
       setImage(result.uri);
     }
   };
@@ -85,9 +118,14 @@ const Upload = () => {
       />
       <Button title="Choose File" onPress={() => pickImage(true)} />
       <Button title="Use camera" onPress={() => pickImage(false)} />
+      {isUploading && <ActivityIndicator size="large" color="#0000ff" />}
       <Button title="Upload File" onPress={doUpload} />
     </ScrollView>
   );
+};
+
+Upload.propTypes = {
+  navigation: PropTypes.object,
 };
 
 export default Upload;
