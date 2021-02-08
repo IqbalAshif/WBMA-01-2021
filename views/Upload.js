@@ -8,6 +8,7 @@ import {useMedia, useTag} from '../hooks/ApiHooks';
 import PropTypes from 'prop-types';
 import {MainContext} from '../contexts/MainContext';
 import {appIdentifier} from '../utils/variables';
+import {Video} from 'expo-av';
 
 const Upload = ({navigation}) => {
   const {handleInputChange, inputs, uploadErrors, reset} = useUploadForm();
@@ -115,12 +116,21 @@ const Upload = ({navigation}) => {
     <ScrollView>
       <Text h4>Upload Media file</Text>
       {image && (
-        <Image
-          source={{uri: image}}
-          style={{width: '100%', height: undefined, aspectRatio: 1}}
-        />
+        <>
+          {fileType === 'image' ? (
+            <Image
+              source={{uri: image}}
+              style={{width: '100%', height: undefined, aspectRatio: 1}}
+            />
+          ) : (
+            <Video
+              source={{uri: image}}
+              style={{width: '100%', height: undefined, aspectRatio: 1}}
+              useNativeControls={true}
+            />
+          )}
+        </>
       )}
-
       <Input
         placeholder="title"
         value={inputs.title}
