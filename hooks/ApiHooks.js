@@ -18,24 +18,24 @@ const doFetch = async (url, options = {}) => {
     return json;
   }
 };
-const useLoadMedia = (all = false, limit = 10) => {
+const useLoadMedia = (myFilesOnly, userId) => {
   const [mediaArray, setMediaArray] = useState([]);
   const {update} = useContext(MainContext);
-  const loadMedia = async (limit = 5) => {
+  const loadMedia = async () => {
     try {
-      let listJson;
-      if (all) {
-        listJson = await doFetch(apiUrl + 'media?limit=' + limit);
-      } else {
-        listJson = await doFetch(apiUrl + 'tags/' + appIdentifier);
-      }
+      const listJson = await doFetch(apiUrl + 'tags/' + appIdentifier);
 
-      const media = await Promise.all(
+      let media = await Promise.all(
         listJson.map(async (item) => {
           const fileJson = await doFetch(apiUrl + 'media/' + item.file_id);
           return fileJson;
         })
       );
+
+      if (myFilesOnly) {
+        media = media.filter((item) => item.user_id === userId);
+      }
+
       setMediaArray(media);
     } catch (error) {
       console.error('loadMedia error', error.message);
@@ -43,9 +43,6 @@ const useLoadMedia = (all = false, limit = 10) => {
   };
   // TODO: move useEffect here
   useEffect(() => {
-    // load everything
-    // loadMedia(true, 10);
-    // loads app by id
     loadMedia();
   }, [update]);
 
@@ -167,7 +164,20 @@ const useMedia = () => {
       throw new Error(e.message);
     }
   };
-  return {upload};
+  const deleteFile = async (fileId, token) => {
+    const options = {
+      method: 'DELETE',
+      headers: {'x-access-token': token},
+    };
+    try {
+      const result = await doFetch(apiUrl + 'media/' + fileId, options);
+      return result;
+    } catch (e) {
+      throw new Error('deleteFileError', e.message);
+    }
+  };
+
+  return {upload, deleteFile};
 };
 
 export {useLoadMedia, useLogin, useUser, useTag, useMedia};
